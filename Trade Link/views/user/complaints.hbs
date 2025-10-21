@@ -1,0 +1,376 @@
+{{>user-header}}
+
+<div class="complaints-container">
+    <div class="complaints-wrapper">
+        <div class="header-section">
+            <h1>My Complaints</h1>
+            <a href="/submit-complaint" class="btn-new-complaint">+ New Complaint</a>
+        </div>
+
+        {{#if complaints}}
+        <div class="complaints-grid">
+            {{#each complaints}}
+            <div class="complaint-card">
+                <div class="card-header">
+                    <h3>{{this.subject}}</h3>
+                    <span class="status-badge status-{{this.status}}">{{this.status}}</span>
+                </div>
+
+                <div class="card-body">
+                    <div class="worker-details-section">
+                        <div class="worker-header">
+                            <strong>Worker Details</strong>
+                        </div>
+                        <div class="worker-info-grid">
+                            <div class="worker-info-item">
+                                <span class="label">Name:</span>
+                                <span class="value">{{this.workerDetails.name}}</span>
+                            </div>
+
+                             <div class="worker-info-item">
+                                <span class="label">Profession:</span>
+                                <span class="value">{{this.workerDetails.wrktype}}</span>
+                            </div>
+
+                            {{!<div class="worker-info-item">
+                                <span class="label">Type:</span>
+                                <span class="value worker-type-badge">{{this.workerType}} {{!</span>
+                            </div>}}
+                            {{#if this.workerDetails.phone}}
+                            <div class="worker-info-item">
+                                <span class="label">Phone:</span>
+                                <span class="value">{{this.workerDetails.phone}}</span>
+                            </div>
+                            {{/if}}
+                            {{#if this.workerDetails.location}}
+                            <div class="worker-info-item">
+                                <span class="label">Location:</span>
+                                <span class="value">{{this.workerDetails.location}}</span>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                    {{#if this.workDate}}
+                    <div class="info-row work-date-highlight">
+                        <strong>📅 Work Date:</strong>
+                        <span class="work-date-value">{{this.workDate}}</span>
+                    </div>
+                    {{/if}}
+
+                    <div class="info-row">
+                        <strong>Complaint Details:</strong>
+                        <p>{{this.complaint}}</p>
+                    </div>
+
+                    <div class="info-row">
+                        <strong>Submitted:</strong>
+                        <span>{{this.createdAt}}</span>
+                    </div>
+
+                    {{#if this.adminResponse}}
+                    <div class="admin-response">
+                        <strong>Admin Response:</strong>
+                        <p>{{this.adminResponse}}</p>
+                    </div>
+                    {{/if}}
+
+                    {{#if this.resolvedAt}}
+                    <div class="info-row">
+                        <strong>Resolved:</strong>
+                        <span>{{this.resolvedAt}}</span>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <img src="/design/userprof.png" alt="No complaints" style="width: 100px; opacity: 0.3;">
+            <h3>No Complaints Yet</h3>
+            <p>You haven't submitted any complaints. If you have an issue with a worker, feel free to report it.</p>
+            <a href="/submit-complaint" class="btn-new-complaint">Submit Your First Complaint</a>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .complaints-container {
+        min-height: 100vh;
+        background-image: url(/design/bg_img.png);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        padding: 100px 20px 40px;
+    }
+
+    .complaints-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background: white;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    }
+
+    .header-section h1 {
+        margin: 0;
+        color: #4d74ea;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .btn-new-complaint {
+        background-color: #4d74ea;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .btn-new-complaint:hover {
+        background-color: #3d5fd1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(77, 116, 234, 0.3);
+    }
+
+    .complaints-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .complaint-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .complaint-card:hover {
+        transform: translateY(-5px);
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 20px;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #4d74ea 0%, #6b8ef5 100%);
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        flex: 1;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-in-progress {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-resolved {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .worker-details-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #4d74ea;
+    }
+
+    .worker-header {
+        margin-bottom: 12px;
+    }
+
+    .worker-header strong {
+        color: #4d74ea;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .worker-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .worker-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .worker-info-item .label {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .worker-info-item .value {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .worker-type-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #4d74ea 0%, #6b8ef5 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        width: fit-content;
+    }
+
+    .info-row {
+        margin-bottom: 15px;
+    }
+
+    .info-row strong {
+        display: block;
+        color: #333;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .info-row span,
+    .info-row p {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .work-date-highlight {
+        background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+        padding: 12px 15px;
+        border-radius: 8px;
+        border-left: 4px solid #ffc107;
+        margin-bottom: 20px;
+    }
+
+    .work-date-highlight strong {
+        color: #856404;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .work-date-value {
+        color: #333;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .admin-response {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #4d74ea;
+    }
+
+    .admin-response strong {
+        display: block;
+        color: #4d74ea;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .admin-response p {
+        color: #333;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+        padding: 60px 40px;
+        text-align: center;
+    }
+
+    .empty-state h3 {
+        color: #333;
+        font-size: 24px;
+        margin: 20px 0 10px;
+    }
+
+    .empty-state p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .header-section {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .complaints-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .worker-info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

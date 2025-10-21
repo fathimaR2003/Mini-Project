@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - TradeLink</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Payment Modal Container */
+        .payment-modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 550px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Header */
+        .payment-modal-header {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-modal-header h2 {
+            color: white;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Modal Body */
+        .payment-modal-body {
+            padding: 30px;
+        }
+
+        .payment-title {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Payment Details Box */
+        .payment-details-box {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #333;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .detail-value {
+            color: #555;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+
+        .detail-value.highlight {
+            color: #0f3460;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Amount Summary */
+        .amount-summary {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: white;
+        }
+
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .amount-row.total {
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #48bb78;
+        }
+
+        /* Payment Methods */
+        .payment-methods-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cash-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .cash-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .card-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .payment-btn i {
+            font-size: 20px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: white;
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .confirmation-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .confirmation-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .confirmation-text {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .confirm-yes-btn, .confirm-no-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .confirm-yes-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .confirm-yes-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .confirm-no-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .confirm-no-btn:hover {
+            background: #d0d0d0;
+        }
+
+        /* Card Details Form (Hidden) */
+        .card-details-form {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .card-details-form.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-left: 4px solid #48bb78;
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease;
+            max-width: 350px;
+        }
+
+        .toast.success { border-left-color: #48bb78; }
+        .toast.error { border-left-color: #f56565; }
+        .toast.info { border-left-color: #667eea; }
+
+        .toast-icon {
+            font-size: 20px;
+            min-width: 24px;
+        }
+
+        .toast-message {
+            flex: 1;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(400px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Loading State */
+        .payment-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .payment-modal {
+                max-width: 90vw;
+            }
+
+            .payment-modal-body {
+                padding: 20px;
+            }
+
+            .payment-title {
+                font-size: 24px;
+            }
+
+            .payment-details-box {
+                padding: 20px;
+            }
+
+            .confirmation-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Payment Modal -->
+    <div class="payment-modal">
+        <div class="payment-modal-header">
+            <h2>💳 Payment Page</h2>
+            <button class="modal-close-btn" onclick="window.history.back()">×</button>
+        </div>
+        
+        <div class="payment-modal-body">
+            <h3 class="payment-title">Payment for Work Service</h3>
+
+            <!-- Payment Details Box -->
+            <div class="payment-details-box">
+                <div class="detail-row">
+                    <span class="detail-label">Job Ticket Number:</span>
+                    <span class="detail-value">TK-{{worker.wkid}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Customer Name:</span>
+                    <span class="detail-value">{{users.name}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value">{{worker.profession}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Contact Number:</span>
+                    <span class="detail-value">+91 {{users.ph}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Worker Name:</span>
+                    <span class="detail-value">{{worker.name}}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">District:</span>
+                    <span class="detail-value">{{worker.district}}</span>
+                </div>
+
+                <!-- Amount Summary -->
+                <div class="amount-summary">
+                    <div class="amount-row">
+                        <span>Base Amount:</span>
+                        <span>₹{{basePrice}}</span>
+                    </div>
+                    <div class="amount-row">
+                        <span>GST (18%):</span>
+                        <span>₹{{gst}}</span>
+                    </div>
+                    <div class="amount-row total">
+                        <span>Total Amount:</span>
+                        <span>₹{{totalAmount}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Buttons -->
+            <div class="payment-methods-section">
+                <button class="payment-btn cash-btn" onclick="confirmCashPayment()">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Pay with Cash
+                </button>
+                <button class="payment-btn card-btn" onclick="showCardDetails()">
+                    <i class="fas fa-credit-card"></i>
+                    Pay with Card
+                </button>
+            </div>
+
+            <!-- Card Details Form (Hidden) -->
+            <div class="card-details-form" id="cardDetailsForm">
+                <h4 style="color: #333; margin-bottom: 15px;">Card Details</h4>
+                <div class="form-group">
+                    <label>Card Holder Name</label>
+                    <input type="text" id="cardName" placeholder="Enter card holder name" required>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="Enter 16-digit card number" maxlength="16" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cvv" placeholder="3-digit CVV" maxlength="3" required>
+                    </div>
+                </div>
+                <button class="payment-btn card-btn" style="margin-top: 15px;" onclick="processCardPayment()">
+                    <i class="fas fa-check"></i>
+                    Confirm Payment
+                </button>
+                <button class="payment-btn" style="background: #e0e0e0; color: #333; margin-top: 10px;" onclick="hideCardDetails()">
+                    Cancel
+                </button>
+            </div>
+
+            <a href="/activities" class="back-btn">← Back to Activities</a>
+        </div>
+    </div>
+
+    <!-- Cash Payment Confirmation Modal -->
+    <div class="confirmation-modal" id="cashConfirmModal">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">❓</div>
+            <p class="confirmation-text">Confirm cash payment?</p>
+            <div class="confirmation-buttons">
+                <button class="confirm-yes-btn" onclick="processCashPayment()">Yes</button>
+                <button class="confirm-no-btn" onclick="closeCashConfirm()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Show Toast Notification
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, duration);
+        }
+
+        // Cash Payment Functions
+        function confirmCashPayment() {
+            document.getElementById('cashConfirmModal').classList.add('active');
+        }
+
+        function closeCashConfirm() {
+            document.getElementById('cashConfirmModal').classList.remove('active');
+        }
+
+        async function processCashPayment() {
+            closeCashConfirm();
+            showToast('🔄 Processing cash payment...', 'info');
+            
+            setTimeout(() => {
+                submitPayment('CASH');
+            }, 1500);
+        }
+
+        // Card Payment Functions
+        function showCardDetails() {
+            document.getElementById('cardDetailsForm').classList.add('active');
+        }
+
+        function hideCardDetails() {
+            document.getElementById('cardDetailsForm').classList.remove('active');
+            clearCardForm();
+        }
+
+        function clearCardForm() {
+            document.getElementById('cardName').value = '';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('expiryDate').value = '';
+            document.getElementById('cvv').value = '';
+        }
+
+        function validateCardDetails() {
+            const cardName = document.getElementById('cardName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+
+            if (!cardName || !cardNumber || !expiryDate || !cvv) {
+                showToast('⚠️ Please fill all card details', 'error');
+                return false;
+            }
+
+            if (cardNumber.length !== 16 || isNaN(cardNumber)) {
+                showToast('⚠️ Please enter a valid 16-digit card number', 'error');
+                return false;
+            }
+
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                showToast('⚠️ Please enter expiry date in MM/YY format', 'error');
+                return false;
+            }
+
+            if (cvv.length !== 3 || isNaN(cvv)) {
+                showToast('⚠️ Please enter a valid 3-digit CVV', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        async function processCardPayment() {
+            if (!validateCardDetails()) {
+                return;
+            }
+
+            showToast('🔄 Processing card payment...', 'info');
+            
+            setTimeout(() => {
+                submitPayment('CARD', {
+                    cardNumber: document.getElementById('cardNumber').value,
+                    cardName: document.getElementById('cardName').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    cvv: document.getElementById('cvv').value
+                });
+            }, 1500);
+        }
+
+        // Submit Payment
+        async function submitPayment(method, cardData = {}) {
+            try {
+                const formData = new FormData();
+                formData.append('workerId', '{{worker.wkid}}');
+                formData.append('workType', '{{worker.profession}}');
+                formData.append('totalAmount', '{{totalAmount}}');
+                formData.append('paymentMethod', method);
+                
+                if (cardData.cardNumber) {
+                    formData.append('cardNumber', cardData.cardNumber);
+                    formData.append('cardName', cardData.cardName);
+                    formData.append('expiryDate', cardData.expiryDate);
+                    formData.append('cvv', cardData.cvv);
+                }
+
+                const response = await fetch('/process-payment', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showToast('✓ Payment successful!', 'success');
+                    setTimeout(() => {
+                        window.location.href = response.url;
+                    }, 2000);
+                } else {
+                    showToast('✕ Payment failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showToast('✕ An error occurred. Please try again.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
