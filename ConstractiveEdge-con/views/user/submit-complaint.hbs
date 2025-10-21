@@ -1,0 +1,468 @@
+{{>user-header}}
+
+<div class="complaint-container">
+    <div class="complaint-card">
+        <h2>Submit a Complaint</h2>
+        <p class="subtitle">Report an issue about a worker or their work</p>
+        
+        <form action="/submit-complaint" method="POST">
+            <div class="form-group">
+                <label for="workerId">Select Worker *</label>
+                <select name="workerId" id="workerId" required onchange="updateWorkerType()">
+                    <option value="">-- Choose a worker --</option>
+                    {{#each workers}}
+                    <option value="{{this.workers.wkid}}" 
+                            data-worker-type="{{this.workers.work}}"
+                            data-worker-name="{{this.workers.name}}"
+                            data-worker-phone="{{this.workers.phone}}"
+                            data-worker-location="{{this.workers.location}}"
+
+
+                            data-worker-profession="{{this.workerDetails.wrktype}}">
+
+
+                        {{this.workers.name}} - {{this.workers.work}}
+
+                         {{this.workers.wrktype}}
+
+                    </option>
+                    {{/each}}
+                </select>
+                <input type="hidden" name="workerType" id="workerType">
+            </div>
+
+            <div id="workerPreview" class="worker-preview" style="display: none;">
+                <div class="preview-header">
+                    <strong>Selected Worker Details</strong>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-item">
+                        <span class="preview-label">Name:</span>
+                        <span class="preview-value" id="previewName"></span>
+                    </div>
+                    {{!<div class="preview-item">
+                        <span class="preview-label">Type:</span>
+                        <span class="preview-value">
+                           <span class="preview-type-badge" id="previewType"></span>
+                        </span>
+
+                        
+                    </div>}}
+                    <div class="preview-item" id="previewPhoneContainer" style="display: none;">
+                        <span class="preview-label">Phone:</span>
+                        <span class="preview-value" id="previewPhone"></span>
+                    </div>
+                    <div class="preview-item" id="previewLocationContainer" style="display: none;">
+                        <span class="preview-label">Location:</span>
+                        <span class="preview-value" id="previewLocation"></span>
+                    </div>
+                </div>
+                
+                <!-- Pricing Information Section -->
+                <div id="pricingInfo" class="pricing-info" style="display: none;">
+                    <div class="pricing-header">
+                        <strong>💰 Pricing Information</strong>
+                    </div>
+                    <div class="pricing-content">
+                        <div class="pricing-item">
+                            <span class="pricing-icon">📅</span>
+                            <div class="pricing-details">
+                                <span class="pricing-label">Daily Rate</span>
+                                <span class="pricing-value" id="pricingDaily">₹0</span>
+                            </div>
+                        </div>
+                        <div class="pricing-item">
+                            <span class="pricing-icon">⏰</span>
+                            <div class="pricing-details">
+                                <span class="pricing-label">Hourly Rate</span>
+                                <span class="pricing-value" id="pricingHourly">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="workDate">Work Date *</label>
+                <input type="date" name="workDate" id="workDate" required>
+                <small class="field-hint">Select the date when the work issue occurred</small>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject *</label>
+                <input type="text" name="subject" id="subject" placeholder="Brief description of the issue" required>
+            </div>
+
+            <div class="form-group">
+                <label for="complaint">Detailed Complaint *</label>
+                <textarea name="complaint" id="complaint" rows="6" placeholder="Describe your complaint in detail..." required></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Submit Complaint</button>
+                <a href="/complaints" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .complaint-container {
+        min-height: 100vh;
+        background-image: url(/design/bg_img.png);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 20px 40px;
+    }
+
+    .complaint-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .complaint-card h2 {
+        color: #4d74ea;
+        margin: 0 0 10px 0;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .subtitle {
+        color: #666;
+        margin: 0 0 30px 0;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #4d74ea;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 5px;
+        color: #888;
+        font-size: 12px;
+        font-style: italic;
+    }
+
+    .worker-preview {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-left: 4px solid #4d74ea;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .preview-header {
+        margin-bottom: 12px;
+    }
+
+    .preview-header strong {
+        color: #4d74ea;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+    }
+
+    .preview-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .preview-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .preview-item:first-child {
+        padding-top: 0;
+    }
+
+    .preview-label {
+        font-size: 12px;
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .preview-value {
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .preview-type-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #4d74ea 0%, #6b8ef5 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Pricing Info Styles */
+    .pricing-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px dashed #dee2e6;
+    }
+
+    .pricing-header {
+        margin-bottom: 12px;
+    }
+
+    .pricing-header strong {
+        color: #28a745;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+    }
+
+    .pricing-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pricing-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+
+    .pricing-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .pricing-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+    }
+
+    .pricing-label {
+        font-size: 13px;
+        color: #155724;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .pricing-value {
+        font-size: 18px;
+        color: #155724;
+        font-weight: 700;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        flex: 1;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-submit {
+        background-color: #4d74ea;
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background-color: #3d5fd1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(77, 116, 234, 0.3);
+    }
+
+    .btn-cancel {
+        background-color: #f5f5f5;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e0e0e0;
+    }
+
+    @media (max-width: 768px) {
+        .complaint-card {
+            padding: 30px 20px;
+        }
+
+        .complaint-card h2 {
+            font-size: 24px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    // Create pricing lookup map from server data
+    const workPricesMap = {};
+    {{#each workPrices}}
+    workPricesMap['{{this.workType}}'] = {
+        dailyRate: {{this.dailyRate}},
+        hourlyRate: {{this.hourlyRate}}
+    };
+    {{/each}}
+
+    // Set max date to today (prevent future dates)
+    document.addEventListener('DOMContentLoaded', function() {
+        const workDateInput = document.getElementById('workDate');
+        const today = new Date().toISOString().split('T')[0];
+        workDateInput.setAttribute('max', today);
+    });
+
+    function updateWorkerType() {
+        const workerSelect = document.getElementById('workerId');
+        const workerTypeInput = document.getElementById('workerType');
+        const selectedOption = workerSelect.options[workerSelect.selectedIndex];
+        const workerPreview = document.getElementById('workerPreview');
+        
+        if (selectedOption && selectedOption.value) {
+            // Update hidden field
+            const workerType = selectedOption.getAttribute('data-worker-type');
+            workerTypeInput.value = workerType;
+            
+            // Update preview
+            document.getElementById('previewName').textContent = selectedOption.getAttribute('data-worker-name');
+            document.getElementById('previewType').textContent = workerType;
+            
+            // Show/hide phone
+            const phone = selectedOption.getAttribute('data-worker-phone');
+            const phoneContainer = document.getElementById('previewPhoneContainer');
+            if (phone && phone !== 'null' && phone !== '') {
+                document.getElementById('previewPhone').textContent = phone;
+                phoneContainer.style.display = 'flex';
+            } else {
+                phoneContainer.style.display = 'none';
+            }
+            
+            // Show/hide location
+            const location = selectedOption.getAttribute('data-worker-location');
+            const locationContainer = document.getElementById('previewLocationContainer');
+            if (location && location !== 'null' && location !== '') {
+                document.getElementById('previewLocation').textContent = location;
+                locationContainer.style.display = 'flex';
+            } else {
+                locationContainer.style.display = 'none';
+            }
+            
+            // Show/hide pricing information
+            const pricingInfo = document.getElementById('pricingInfo');
+            const priceData = workPricesMap[workerType];
+            if (priceData) {
+                document.getElementById('pricingDaily').textContent = '₹' + priceData.dailyRate.toFixed(2);
+                document.getElementById('pricingHourly').textContent = '₹' + priceData.hourlyRate.toFixed(2);
+                pricingInfo.style.display = 'block';
+            } else {
+                pricingInfo.style.display = 'none';
+            }
+            
+            // Show preview
+            workerPreview.style.display = 'block';
+        } else {
+            workerTypeInput.value = '';
+            workerPreview.style.display = 'none';
+            document.getElementById('pricingInfo').style.display = 'none';
+        }
+    }
+</script>
